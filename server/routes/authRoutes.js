@@ -10,14 +10,12 @@ router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Check that all fields were provided
     if (!name || !email || !password) {
       return res.status(400).json({
         message: "Please provide name, email, and password",
       });
     }
 
-    // Check whether the email is already registered
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -26,10 +24,8 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // Hash the password before saving it
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create the user
     const user = await User.create({
       name,
       email,
@@ -45,7 +41,7 @@ router.post("/register", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error(error);
+    console.error("Registration error:", error);
 
     res.status(500).json({
       message: "Server error",
@@ -94,7 +90,7 @@ router.post("/login", async (req, res) => {
       }
     );
 
-    res.json({
+    res.status(200).json({
       message: "Login successful",
       token,
       user: {
@@ -104,7 +100,7 @@ router.post("/login", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error(error);
+    console.error("Login error:", error);
 
     res.status(500).json({
       message: "Server error",
