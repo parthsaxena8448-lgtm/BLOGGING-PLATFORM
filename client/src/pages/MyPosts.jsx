@@ -13,8 +13,14 @@ function MyPosts() {
     try {
       const token = localStorage.getItem("token");
 
+      if (!token) {
+        setError("Please log in first.");
+        setLoading(false);
+        return;
+      }
+
       const response = await axios.get(
-        "http://localhost:5001/api/posts/my-posts",
+        `${import.meta.env.VITE_API_URL}/posts/my-posts`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -55,8 +61,13 @@ function MyPosts() {
     try {
       const token = localStorage.getItem("token");
 
+      if (!token) {
+        setError("Please log in first.");
+        return;
+      }
+
       await axios.delete(
-        `http://localhost:5001/api/posts/${postId}`,
+        `${import.meta.env.VITE_API_URL}/posts/${postId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -86,7 +97,9 @@ function MyPosts() {
       <div className="dashboard-container">
         <section className="dashboard-header">
           <div>
-            <p className="dashboard-eyebrow">YOUR WRITING</p>
+            <p className="dashboard-eyebrow">
+              YOUR WRITING
+            </p>
 
             <h1>My Posts</h1>
 
@@ -158,10 +171,13 @@ function MyPosts() {
 
                     <div>
                       <strong>
-                        {post.author?.name || "Unknown author"}
+                        {post.author?.name ||
+                          "Unknown author"}
                       </strong>
 
-                      <span>Published on MyBlog</span>
+                      <span>
+                        Published on MyBlog
+                      </span>
                     </div>
                   </div>
 
@@ -189,9 +205,14 @@ function MyPosts() {
                     </Link>
 
                     <button
-                      onClick={() => handleDelete(post._id)}
+                      type="button"
+                      onClick={() =>
+                        handleDelete(post._id)
+                      }
                       className="dashboard-delete-button"
-                      disabled={deletingId === post._id}
+                      disabled={
+                        deletingId === post._id
+                      }
                     >
                       {deletingId === post._id
                         ? "Deleting..."

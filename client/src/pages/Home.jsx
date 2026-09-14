@@ -13,7 +13,7 @@ function Home() {
     const fetchPosts = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5001/api/posts"
+          `${import.meta.env.VITE_API_URL}/posts`
         );
 
         setPosts(response.data);

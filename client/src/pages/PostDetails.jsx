@@ -13,7 +13,7 @@ function PostDetails() {
     const fetchPost = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/posts/${id}`
+          `${import.meta.env.VITE_API_URL}/posts/${id}`
         );
 
         setPost(response.data);
@@ -48,9 +48,13 @@ function PostDetails() {
       <main className="article-page">
         <div className="article-state">
           <h2>Article unavailable</h2>
+
           <p>{error}</p>
 
-          <Link to="/" className="article-back-button">
+          <Link
+            to="/"
+            className="article-back-button"
+          >
             ← Back to Home
           </Link>
         </div>
@@ -62,12 +66,16 @@ function PostDetails() {
     return null;
   }
 
-  const authorName = post.author?.name || "Unknown author";
+  const authorName =
+    post.author?.name || "Unknown author";
 
   return (
     <main className="article-page">
       <article className="article-container">
-        <Link to="/" className="article-back">
+        <Link
+          to="/"
+          className="article-back"
+        >
           ← Back to stories
         </Link>
 
@@ -98,8 +106,8 @@ function PostDetails() {
         </h1>
 
         <p className="article-subtitle">
-          A story, idea, or experience shared with the
-          MyBlog community.
+          A story, idea, or experience shared with
+          the MyBlog community.
         </p>
 
         <div className="article-divider"></div>
@@ -131,7 +139,10 @@ function PostDetails() {
         </div>
 
         <div className="article-bottom">
-          <Link to="/" className="article-back-button">
+          <Link
+            to="/"
+            className="article-back-button"
+          >
             ← Read more stories
           </Link>
         </div>

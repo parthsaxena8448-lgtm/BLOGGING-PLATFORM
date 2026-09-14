@@ -29,7 +29,7 @@ function CreatePost() {
       }
 
       await axios.post(
-        "http://localhost:5001/api/posts",
+        `${import.meta.env.VITE_API_URL}/posts`,
         {
           title,
           content,
@@ -79,9 +79,10 @@ function CreatePost() {
           className="editor-card"
         >
           <div className="editor-field">
-            <label>Title</label>
+            <label htmlFor="title">Title</label>
 
             <input
+              id="title"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -91,9 +92,10 @@ function CreatePost() {
           </div>
 
           <div className="editor-field">
-            <label>Content</label>
+            <label htmlFor="content">Content</label>
 
             <textarea
+              id="content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Tell your story..."

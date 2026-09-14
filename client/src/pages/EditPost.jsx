@@ -11,6 +11,7 @@ function EditPost() {
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -18,7 +19,7 @@ function EditPost() {
     const fetchPost = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/posts/${id}`
+          `${import.meta.env.VITE_API_URL}/posts/${id}`
         );
 
         setTitle(response.data.title);
@@ -48,8 +49,14 @@ function EditPost() {
     try {
       const token = localStorage.getItem("token");
 
+      if (!token) {
+        setError("Please log in first.");
+        setSaving(false);
+        return;
+      }
+
       await axios.put(
-        `http://localhost:5001/api/posts/${id}`,
+        `${import.meta.env.VITE_API_URL}/posts/${id}`,
         {
           title,
           content,
@@ -80,78 +87,82 @@ function EditPost() {
 
   if (loading) {
     return (
-      <main style={styles.page}>
-        <div style={styles.loading}>
-          Loading post...
+      <main className="editor-page">
+        <div className="article-state">
+          <div className="loading-dot"></div>
+          <p>Loading post...</p>
         </div>
       </main>
     );
   }
 
   return (
-    <main style={styles.page}>
-      <div style={styles.wrapper}>
-        <div style={styles.header}>
-          <p style={styles.eyebrow}>EDIT YOUR STORY</p>
+    <main className="editor-page">
+      <div className="editor-wrapper">
+        <div className="editor-header">
+          <p className="editor-eyebrow">EDIT YOUR STORY</p>
 
-          <h1 style={styles.title}>Edit post</h1>
+          <h1>Edit post</h1>
 
-          <p style={styles.subtitle}>
+          <p>
             Make changes to your story and save them when
             you're ready.
           </p>
         </div>
 
-        <form onSubmit={handleUpdate} style={styles.form}>
-          <div style={styles.field}>
-            <label style={styles.label}>Title</label>
+        <form
+          onSubmit={handleUpdate}
+          className="editor-card"
+        >
+          <div className="editor-field">
+            <label htmlFor="title">Title</label>
 
             <input
+              id="title"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-              style={styles.titleInput}
             />
           </div>
 
-          <div style={styles.field}>
-            <label style={styles.label}>Content</label>
+          <div className="editor-field">
+            <label htmlFor="content">Content</label>
 
             <textarea
+              id="content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows="14"
               required
-              style={styles.textarea}
             />
           </div>
 
           {error && (
-            <div style={styles.error}>
+            <div className="editor-message editor-error">
               {error}
             </div>
           )}
 
           {message && (
-            <div style={styles.success}>
+            <div className="editor-message editor-success">
               {message}
             </div>
           )}
 
-          <div style={styles.actions}>
+          <div className="editor-actions">
             <button
               type="button"
+              className="editor-cancel"
               onClick={() => navigate("/my-posts")}
-              style={styles.cancelButton}
             >
               Cancel
             </button>
 
             <button
               type="submit"
+              className="editor-submit"
               disabled={saving}
-              style={styles.saveButton}
             >
               {saving ? "Saving..." : "Save Changes"}
             </button>
@@ -161,146 +172,5 @@ function EditPost() {
     </main>
   );
 }
-
-const styles = {
-  page: {
-    minHeight: "calc(100vh - 72px)",
-    backgroundColor: "#fafafa",
-    padding: "60px 20px 80px",
-  },
-
-  wrapper: {
-    maxWidth: "760px",
-    margin: "0 auto",
-  },
-
-  header: {
-    marginBottom: "35px",
-  },
-
-  eyebrow: {
-    margin: "0 0 10px",
-    fontSize: "11px",
-    letterSpacing: "2px",
-    fontWeight: "700",
-    color: "#777777",
-  },
-
-  title: {
-    margin: "0 0 10px",
-    fontSize: "42px",
-    lineHeight: "1.1",
-    color: "#111111",
-  },
-
-  subtitle: {
-    margin: 0,
-    fontSize: "16px",
-    color: "#777777",
-    lineHeight: "1.6",
-  },
-
-  form: {
-    backgroundColor: "#ffffff",
-    border: "1px solid #e5e5e5",
-    borderRadius: "20px",
-    padding: "32px",
-  },
-
-  field: {
-    marginBottom: "24px",
-  },
-
-  label: {
-    display: "block",
-    marginBottom: "9px",
-    fontSize: "14px",
-    fontWeight: "600",
-    color: "#222222",
-  },
-
-  titleInput: {
-    width: "100%",
-    boxSizing: "border-box",
-    padding: "15px 16px",
-    border: "1px solid #d6d6d6",
-    borderRadius: "10px",
-    fontSize: "18px",
-    color: "#111111",
-    backgroundColor: "#ffffff",
-    outline: "none",
-  },
-
-  textarea: {
-    width: "100%",
-    boxSizing: "border-box",
-    padding: "15px 16px",
-    border: "1px solid #d6d6d6",
-    borderRadius: "10px",
-    fontSize: "16px",
-    lineHeight: "1.7",
-    color: "#111111",
-    backgroundColor: "#ffffff",
-    resize: "vertical",
-    outline: "none",
-    fontFamily: "inherit",
-  },
-
-  error: {
-    marginBottom: "18px",
-    padding: "12px 14px",
-    border: "1px solid #dddddd",
-    borderRadius: "10px",
-    fontSize: "14px",
-    color: "#222222",
-    backgroundColor: "#fafafa",
-  },
-
-  success: {
-    marginBottom: "18px",
-    padding: "12px 14px",
-    border: "1px solid #dddddd",
-    borderRadius: "10px",
-    fontSize: "14px",
-    color: "#222222",
-    backgroundColor: "#fafafa",
-  },
-
-  actions: {
-    display: "flex",
-    justifyContent: "flex-end",
-    gap: "12px",
-    marginTop: "8px",
-  },
-
-  cancelButton: {
-    padding: "12px 20px",
-    border: "1px solid #d6d6d6",
-    borderRadius: "999px",
-    backgroundColor: "#ffffff",
-    color: "#222222",
-    fontSize: "14px",
-    fontWeight: "600",
-    cursor: "pointer",
-  },
-
-  saveButton: {
-    padding: "12px 22px",
-    border: "none",
-    borderRadius: "999px",
-    backgroundColor: "#111111",
-    color: "#ffffff",
-    fontSize: "14px",
-    fontWeight: "700",
-    cursor: "pointer",
-  },
-
-  loading: {
-    textAlign: "center",
-    padding: "100px 20px",
-    fontSize: "16px",
-    color: "#777777",
-  },
-};
 
 export default EditPost;
