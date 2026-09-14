@@ -16,28 +16,38 @@ const MONGO_URI = process.env.MONGO_URI;
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/auth", authRoutes);
-app.use("/api/posts", postRoutes);
-
 app.get("/", (req, res) => {
-  res.send("Blogging Platform Backend is Working!");
+  res.status(200).json({
+    message: "MyBlog backend is working!",
+    success: true,
+  });
 });
 
 app.get("/api/test", (req, res) => {
-  res.json({
+  res.status(200).json({
     message: "Blogging API is working!",
     success: true,
   });
+});
+
+app.use("/api/auth", authRoutes);
+app.use("/api/posts", postRoutes);
+
+app.use((req, res) => {
+  res.status(404).json({
+    message: "API route not found",
+    path: req.originalUrl,
+  });
+});
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
 mongoose
   .connect(MONGO_URI)
   .then(() => {
     console.log("MongoDB connected successfully");
-
-    app.listen(PORT, "0.0.0.0", () => {
-      console.log(`Server running on port ${PORT}`);
-    });
   })
   .catch((error) => {
     console.error(
